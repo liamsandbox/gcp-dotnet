@@ -1,0 +1,66 @@
+# Service Definition
+apiVersion: v1
+kind: Service
+metadata:
+  name: gcp-dotnet
+spec:
+  ports:
+  - port: 80
+    targetPort: 5157         # Updated to match the container's exposed port
+    protocol: TCP
+    name: http
+  selector:
+    app: gcp-dotnet 
+  type: NodePort
+
+---
+# Ingress Definition
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gcp-dotnet 
+spec:
+  defaultBackend:
+    service:
+      name: gcp-dotnet
+      port:
+        number: 80
+
+---
+# Deployment Definition
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gcp-dotnet 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gcp-dotnet 
+  template:
+    metadata:
+      labels:
+        app: gcp-dotnet 
+    spec:
+      containers:
+      - name: gcp-dotnet 
+        image: gcp-dotnet          # Updated with the correct image name
+        ports:
+          - containerPort: 5157    # Updated to match the exposed port in Docker
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5157             # Updated to match the exposed port
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5157             # Updated to match the exposed port
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        resources:
+          limits:
+            memory: 1024Mi
+          requests:
+            memory: 256Mi
