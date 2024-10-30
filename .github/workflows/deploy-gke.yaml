@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  PROJECT_ID: dotnet-439720
-  PROJECT_NUMBER: 63166071597
+  PROJECT_ID: dotnet-host
+  PROJECT_NUMBER: 740226841203
 
   CLUSTER: clouddemo-linux
   CLUSTER_ZONE: us-central1-a
